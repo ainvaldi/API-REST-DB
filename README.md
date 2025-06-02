@@ -1,4 +1,4 @@
-# Proyecto API REST con Sequelize - Users & Products
+# Proyecto API REST con Sequelize - Products
 
 Este proyecto es una API REST básica construida con Node.js, Express y Sequelize, con una estructura tradicional:
 
@@ -110,13 +110,6 @@ index.js → punto de entrada de la aplicación
 package.json → dependencias y scripts
 
 ## Endpoints disponibles
-
-### Users
-
-GET /users → listar usuarios  
-POST /users → crear un usuario  
-PUT /users/:id → actualizar usuario  
-DELETE /users/:id → eliminar usuario  
 
 ### Products
 
