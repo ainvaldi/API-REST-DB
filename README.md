@@ -103,8 +103,8 @@ http://localhost:3000
 
 /config → configuración de Sequelize (config.json)
 /models → modelos Sequelize
-/controllers → lógica de negocio (users, products)
-/routes → rutas de la API (users, products)
+/controllers → lógica de negocio (products)
+/routes → rutas de la API (products)
 createDatabase.js → script para crear la base de datos
 index.js → punto de entrada de la aplicación
 package.json → dependencias y scripts
