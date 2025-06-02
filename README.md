@@ -58,28 +58,6 @@ El archivo se llama:
 
 createDatabase.js
 
-Contenido del script:
-
-const mysql = require('mysql2/promise')
-
-const crearBaseDeDatos = async () => {
-    try {
-        const connection = await mysql.createConnection({
-            host: 'localhost',
-            user: 'root',
-            password: 'root1234'
-        })
-
-        await connection.query('CREATE DATABASE IF NOT EXISTS crud_db')
-        console.log("Base de datos creada exitosamente")
-        await connection.end()
-    } catch (error) {
-        console.error("Error creando la base de datos", error.message)
-    }
-}
-
-crearBaseDeDatos()
-
 ### Cómo usarlo
 
 1. Revisar que host, user, password y database coincidan con tu configuración de MySQL.
