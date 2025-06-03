@@ -1,22 +1,4 @@
-const fs = require('fs')
-const path = require('path')
-const filePath = path.join(__dirname, '../db/productos.json')
-
 const { Producto } = require('../models')
-
-const leerProductos = () => {
-    const data = fs.readFileSync(filePath, 'utf8')
-    return JSON.parse(data)
-}
-
-let productos = leerProductos()
-
-console.log("productos", productos);
-
-
-const escribirProductos = (productos) => {
-    fs.writeFileSync(filePath, JSON.stringify(productos, null, 2))
-}
 
 const getProducts = async (req, res) => {
     try {
@@ -54,25 +36,42 @@ const createProduct = async (req, res) => {
     }
 }
 
-const updateProduct = (req, res) => {
-    const producto = productos.find(item => item.id === parseInt(req.params.id))
-    if (!producto) return res.json({ status: 404, message: 'Producto no encontrado' })
-    const { nombre, precio } = req.body
-    producto.nombre = nombre || producto.nombre
-    producto.precio = precio || producto.precio
+const updateProduct = async (req, res) => {
+    try {
+        const producto = await Producto.findByPk(req.params.id);
+        if (!producto) {
+            return res.status(404).json({ status: 404, message: 'Producto no encontrado' });
+        }
 
-    escribirProductos(productos)
+        const { nombre, precio } = req.body;
 
-    res.json({ status: 201, message: 'Producto editado exitosamente' })
-}
+        producto.nombre = nombre || producto.nombre;
+        producto.precio = precio || producto.precio;
 
-const deleteProduct = (req, res) => {
-    let producto = productos.find(item => item.id === parseInt(req.params.id))
-    if (!producto) return res.json({ status: 404, message: 'Producto no encontrado' })
-    productos = productos.filter(item => item.id !== producto.id)
-    escribirProductos(productos)
-    res.json({ status: 201, message: 'Producto eliminado exitosamente' })
-}
+        await producto.save();
+
+        res.status(200).json({ status: 200, message: 'Producto editado exitosamente', data: producto });
+    } catch (error) {
+        res.status(500).json({ status: 500, message: 'Error al editar producto', error: error.message });
+    }
+};
+
+
+const deleteProduct = async (req, res) => {
+    try {
+        const producto = await Producto.findByPk(req.params.id);
+        if (!producto) {
+            return res.status(404).json({ status: 404, message: 'Producto no encontrado' });
+        }
+
+        await producto.destroy();
+
+        res.status(200).json({ status: 200, message: 'Producto eliminado exitosamente' });
+    } catch (error) {
+        res.status(500).json({ status: 500, message: 'Error al eliminar producto', error: error.message });
+    }
+};
+
 
 module.exports = {
     getProducts,
