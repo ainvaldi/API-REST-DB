@@ -7,11 +7,12 @@ const {
     updateProduct,
     deleteProduct
 } = require('../controllers/products.controller')
+const verifyToken = require('../middlewares/verifyToken')
+const isAdmin = require('../middlewares/isAdmin')
 
-
-router.get('/', getProducts)
+router.get('/', verifyToken, getProducts)
 router.get('/:id', getProductById)
-router.post('/', createProduct)
+router.post('/', verifyToken, isAdmin, createProduct)
 router.put('/:id', updateProduct)
 router.delete('/:id', deleteProduct)
 
