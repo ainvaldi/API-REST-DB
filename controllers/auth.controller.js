@@ -38,7 +38,15 @@ const login = async (req, res) => {
 
         const token = jwt.sign({ id: userExist.id, rol: userExist.rol }, 'secreto1234', { expiresIn: '1h' })
 
-        res.json({ message: 'Inicio de sesion exitoso', token })
+        const user = {
+            id: userExist.id,
+            nombre: userExist.nombre,
+            email: userExist.email,
+            edad: userExist.edad,
+            rol: userExist.rol
+        }
+
+        res.json({ message: 'Inicio de sesion exitoso', token, user: user })
     } catch (error) {
         res.status(500).json({ status: 500, message: 'Error al loguear el usuario', error: error.message });
     }
