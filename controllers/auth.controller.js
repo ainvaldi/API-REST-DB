@@ -2,6 +2,7 @@ const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const { Usuario } = require('../models');
 const crypto = require('crypto')
+const { sendEmail } = require('../utils/mailer')
 
 const register = async (req, res) => {
 
@@ -86,10 +87,16 @@ const forgotPassword = async (req, res) => {
         resetTokens.set(user.id, { tokenHash, expiresAt })
 
         const resetUrl = `${process.env.FRONT_URL || 'http://localhost:5173'}/recuperar-contraseña?token=${rawToken}&id=${user.id}`
-        const html = resetEmailTemplate({ nombre: user.nombre, resetUrl })
+        await sendEmail({
+            to: user.email,
+            subject: 'Recuperar contraseña',
+            html: resetEmailTemplate({ nombre: user.nombre, resetUrl })
+        })
 
-        console.log("Envio de mail")
-        console.log('html', html)
+        return res.status(200).json({
+            message: 'Se ha enviado un correo con instrucciones para recuperar tu contraseña',
+        });
+
     } catch (error) {
         return res.status(500).json({ message: 'Error al enviar el mail', error: error.message })
     }
