@@ -1,9 +1,29 @@
 const { Producto } = require('../models')
+const { Op } = require('sequelize')
 
 const getProducts = async (req, res) => {
     try {
-        const productos = await Producto.findAll()
-        res.json({ data: productos, status: 200, message: 'Productos obtenidos de manera exitosa' })
+        const page = Math.max(1, parseInt(req.query.page, 10) || 1)
+        const limit = Math.max(1, parseInt(req.query.limit, 10) || 10)
+        const q = (req.query.q || '').trim()
+        const where = q ? { nombre: { [Op.like]: `%${q}%` } } : {}
+        const offset = (page - 1) * limit
+
+        const { rows, count } = await Producto.findAndCountAll({
+            where,
+            offset: (page - 1) * limit,
+            limit,
+            order: [['id', 'DESC']]
+        })
+
+        return res.json({
+            data: rows,
+            total: count,
+            page,
+            totalPages: Math.ceil(count / limit),
+            status: 200,
+            message: 'Productos obtenidos de manera exitosa'
+        })
     } catch (error) {
         res.status(500).json({ message: 'Error al obtener productos' })
     }
